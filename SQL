@@ -1,0 +1,36 @@
+## Ejercicios de SQL
+https://www.w3schools.com/sql/trysql.asp?filename=trysql_select_all
+
+## Ejercicio 1:
+Todas las ventas realizadas por MargaretPeacock al cliente Frankenversand.La salida debe  contener  los  siguientes  campos: Nombre  y  Apellido  del  Vendedor,  Nombre  del Cliente,  ID  de  la  Orden  de  Compra  (tabla  Orders),  Nombre  del  Producto  (tabla Products), Presentación (Unit, de tabla Products), Cantidad (tabla OrderDetails), Precio (tabla Products) y Total (calculado como Precio*Cantidad).
+
+SELECT e.LastName, e.Firstname, c.CustomerName, o.OrderID, p.ProductName, p.Unit, od.Quantity, p.Price, Price*Quantity as 'Total'
+FROM orders o 
+INNER JOIN Employees e ON e.EmployeeID= o.EmployeeID
+INNER JOIN Customers c ON c.CustomerID= o.CustomerID
+INNER JOIN OrderDetails od ON od.OrderID = o.OrderID  
+INNER JOIN Products p ON p.ProductID = od.ProductID
+WHERE FirstName = 'Margaret' and LastName = 'Peacock' and CustomerName = 'Frankenversand'
+
+
+
+## ejercicio 2
+SELECT ProductName as 'Nombre del Producto', Unit as 'Presentación', Price as 'Precio', 
+CASE WHEN Price >75 THEN '12%' WHEN Price >50 THEN '8%' WHEN Price >= 30 THEN '4%' ELSE '0%' END AS 'Descuento',
+Price-Price*(CASE WHEN Price >75 THEN 0.12 WHEN Price >50 THEN 0.08 WHEN Price >= 30 THEN 0.04 ELSE 0 END) AS 'Precio final'
+FROM Products
+
+##ejercicio 3
+SELECT c.CategoryName as 'Nombre de Categoria', MAX(Price) as 'Precio Maximo', MIN(Price) as 'Precio Minimo'
+FROM Products
+INNER JOIN Categories c ON c.CategoryID= Products.CategoryID
+GROUP BY Products.CategoryID 
+ORDER BY 'Precio Maximo' Desc 
+
+##Ejercicio 4
+SELECT c.CustomerName as 'Nombre del Cliente', c.City as 'Ciudad', c.Country as 'Pais', o.OrderID, p.ProductName as 'Nombre del Producto', p.Unit as 'Presentacion', od.Quantity as 'Cantidad', p.Price as 'Precio', p.Price * od.Quantity as 'Total'
+FROM Customers c
+INNER JOIN Orders o ON o.CustomerID = c.CustomerID
+INNER JOIN OrderDetails od ON od.OrderID = o.OrderID
+INNER JOIN Products p ON p.ProductID= od.ProductID
+WHERE c.Country = 'Spain'
