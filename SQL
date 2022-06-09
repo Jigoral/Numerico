@@ -34,3 +34,36 @@ INNER JOIN Orders o ON o.CustomerID = c.CustomerID
 INNER JOIN OrderDetails od ON od.OrderID = o.OrderID
 INNER JOIN Products p ON p.ProductID= od.ProductID
 WHERE c.Country = 'Spain'
+
+#Ejercicio 5
+SELECT p.ProductName, p.Unit, p.Price,
+CASE WHEN Unit LIKE '%box%' THEN '7%' 
+WHEN Unit LIKE '%pkg%' or Unit LIKE '%bottle%' THEN '5%' 
+ELSE '2%' 
+END as 'Recargo%',
+Price * (CASE WHEN Unit LIKE '%box%' THEN 0.07 
+WHEN Unit LIKE '%pkg%' or Unit LIKE '%bottle%' THEN 0.05 
+ELSE 0.02 END) as 'Recargo$',
+Price + Price * (CASE WHEN Unit LIKE '%box%' THEN 0.07 
+WHEN Unit LIKE '%pkg%' or Unit LIKE '%bottle%' THEN 0.05 
+ELSE 0.02 END) as 'Precio Final'
+FROM Products p
+
+## ejercicio 6
+SELECT c.CustomerName as 'Nombre del cliente', COUNT(DISTINCT(o.OrderID)) as 'Cantidad O.C', SUM(p.Price * od.Quantity) as 'total Gastado por cliente'
+FROM Customers c
+INNER JOIN Orders o ON c.CustomerID = o.CustomerID
+INNER JOIN OrderDetails od ON od.OrderID = o.OrderID
+INNER JOIN Products p ON p.ProductID = od.ProductID
+WHERE Country = 'USA'
+GROUP BY o.CustomerID
+
+## Ejercicio 7
+SELECT e.FirstName || " " || e.LastName as 'Nombre Vendedor', COUNT(e.EmployeeID) as 'Cantidad de ventas', ROUND(SUM(od.Quantity * p.Price),2) as 'Total',
+CASE WHEN SUM(od.Quantity * p.Price)>100000 THEN '20%' WHEN SUM(od.Quantity * p.Price)>40000 THEN '10%' WHEN SUM(od.Quantity * p.Price)>30000 THEN '5%' ELSE '0%' END as 'Comision'
+FROM Orders o
+INNER JOIN Employees e ON o.EmployeeID= e.EmployeeID
+INNER JOIN OrderDetails od ON o.OrderID= od.OrderID
+INNER JOIN Products p ON od.ProductID= p.ProductID
+GROUP BY e.EmployeeID
+ORDER BY COUNT(e.EmployeeID) DESC
